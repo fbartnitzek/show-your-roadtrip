@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Show a Pic</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<style>
+html,body{
+	margin:0;
+	max-height:100%;
+}
+img{
+	/*display:block;*/
+	/*max-width:100%; max-height:100%;*/
+	/*object-fit: cover;*/
+}
+	</style>
+</head>
+<body>
+<div>
+	<img id="thePic" src="./pics/20170908_104801.jpg"/>
+</div>
+
+<script>
+	var pic = document.getElementById('thePic');
+	//$(document).ready(function() {
+	$(window).on("load", function() {
+		console.log('ready');
+		var picRatio = pic.width / pic.height;
+		console.log('picRatio:' + picRatio);
+		//setPicSize();
+		
+		var windowRatio = $(window).width() / $(window).height();
+		console.log('windowRatio:' + windowRatio);
+		if (picRatio < windowRatio){
+			var windowRef = $(window).height();
+			pic.height = windowRef;
+			pic.width = windowRef * picRatio;
+		} else {
+			var windowRef = $(window).width();
+			pic.width = windowRef;
+			pic.height = windowRef / picRatio;
+		}
+	});
+	
+	//var picRatio = pic.width / pic.height;
+			//console.log('picRatio:' + picRatio);
+	
+
+	function setPicSize(){
+		var windowRatio = $(window).width() / $(window).height();
+		console.log('windowRatio:' + windowRatio);
+		if (picRatio < windowRatio){
+			var windowRef = $(window).height();
+			pic.height = windowRef;
+			pic.width = windowRef * picRatio;
+		} else {
+			var windowRef = $(window).width();
+			pic.width = windowRef;
+			pic.height = windowRef / picRatio;
+		}
+		return;
+	}
+</script>
+
+</body>
+</html>

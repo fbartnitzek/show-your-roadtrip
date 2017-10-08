@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Roadtrip</title>
+	<meta charset="utf-8"/>
+	<link type="text/css" rel="stylesheet" href="roadtrip.css"/>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>	
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<!--script type="text/javascript" src="allPics.js"></script-->
+	<script type="text/javascript" src="exportedPics.js"></script>
+	<script type="text/javascript" src="allLocations.js"></script>
+	<script>
+		var index = 0;
+	</script>
+</head>
+<body>
+	<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">"West coast is best coast" Roadtrip 201709</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="#">Map<span class="sr-only">(current)</span></a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Cities/Villages<span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">Seattle</a></li>
+            <li><a href="#">Portland</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">...</a></li>
+            <li><a href="#">Victoria</a></li>
+            <li><a href="#">Vancouver</a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tours<span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">Vancouver - Seattle</a></li>
+            <li><a href="#">Seattle - Portland</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">...</a></li>
+            <li><a href="#">Victoria - Vancouver</a></li>
+          </ul>
+        </li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><button id="showButton" type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal" onclick="showPic()">Show</button></li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+
+<!-- modal box to show pics in fullscreen -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" id="myModalId" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <p class="modal-title">
+			<button id="otherNextButton" type="button" class="btn btn-primary btn-sm" onclick="myNextClick()">Next</button>
+			<span id="positionSpan">positionSpan</span>: <span id="picDate">date</span> - <span id="picTitle">Modal title</span>
+		</p>
+		
+		<!--h4 class="modal-title"><span id="picTitle">Modal title</span>   </h4-->
+      </div>
+      <div class="modal-body" id="myModalBody">
+		<img id="thePic"/>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+	<div id="googleMap"></div>
+
+	<script type="text/javascript" src="roadtrip.js"></script>
+
+	<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD2DBAvPxYZnT6nTvHt3dnUAgodDmNzc08&callback=initMap"
+    type="text/javascript"></script>
+</body>
+</html>
