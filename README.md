@@ -3,12 +3,20 @@
 - just use a browser in fullscreen
 
 
-## usage
+## build your roadtrip-site with the framework
 - rename files based on exif-camera-timestamp with python-script `./renameByExif DIR`
 - autorotate pics by exif with `exifautotran DIR/*`
 - generate picInfos with `generateJsonPicFile.py DIR`
 - modify `allLocations.js`, 1 entry at the start-location and 1 entry per accommodation
 - modify `index.html` (maybe that will be configurable too...)
+
+## show the roadtrip
+- click on map-location or route to navigate to show a infobox with the dates
+	- these dates are links and will open a modal window 'ShowPic' to show the configured picture (from allLocations)
+	- there are 2 button for next / previous image
+	- stop the presentation with escape / upper right X
+	- the currently shown picture is saved in the background
+	- quickly jump to certain pic via the url '...roadtrip/index.html?123' to show pic with id 123 from your extractedPics.js-file
 
 ## TODO
 - rotation of pics (if neccessary by cam...)
