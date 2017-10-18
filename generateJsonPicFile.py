@@ -2,13 +2,14 @@
 
 # -*- coding: Windows-1251 -*-
 
-import Image
+# import Image
 
 import os
 import re
 import sys
 import time
 import json
+import piexif
 
 from os.path import isfile, join
 
@@ -16,42 +17,38 @@ CREATE_HARDLINK=0
 
 def generate_pic_info(fn):
     print 'pic found: %s' % (fn)
+    
     if not os.path.isfile(fn):
         print "file not found %s" % fn
         return None
-   
-    pic_info = {}
-    try:
-        im = Image.open(fn)
-        exif_data = im._getexif()
-        # '40962': 5312
-        # '40963': 2988
-        # '305':   "G920..."
-        # '306':   "2017:09:09 08:51:42"
-        # '36867': "2017:09:09 08:51:42"
-        # '36868': "2017:09:09 08:51:42"
-        # '271':   "samsung"
-        # '272':   "SM-G920F"
-        
-        pic_info["url"] = fn
-        pic_info["width"] = exif_data[40962]
-        pic_info["height"] = exif_data[40963]
-        #pic_info["vendor"] = exif_data[271]
-        #pic_info["model"] = exif_data[272]
-        #pic_info["cam"] = exif_data[305]
-        pic_info["ts"] = exif_data[306]
-        
-        #print(json.dumps(exif_data, indent = 4))
-        #print(json.dumps(pic_info, indent = 4, sort_keys=True))
-        return pic_info
-    except:
-        _type, value, traceback = sys.exc_info()
-        pic_info["url"] = fn
-        pic_info["error"] = True
-        print "Error for %s:\n" % fn
-        print "%r", value
+    exif_dict = piexif.load(fn)   
+    all_pic_infos = {}
+    for ifd in ("0th", "Exif", "GPS", "1st"):
+        for tag in exif_dict[ifd]:
+            if piexif.TAGS[ifd][tag]["name"] != "MakerNote": # useless and long
+                all_pic_infos[piexif.TAGS[ifd][tag]["name"]] = exif_dict[ifd][tag]
 
-	return pic_info 
+    pic_infos= {}
+    #for name in ("Model", "Make", "Orientation", "DateTime"):
+    #    pic_infos[name] = all_pic_infos[name]
+
+    pic_infos["url"] = fn
+    pic_infos["ts"] = all_pic_infos["DateTime"]
+    pic_infos["orientation"] = all_pic_infos["Orientation"]
+
+
+    if "PixelXDimension" in all_pic_infos:
+        #for name in ("PixelXDimension", "PixelYDimension"):
+        #    pic_infos[name] = all_pic_infos[name]
+        pic_infos["width"] = all_pic_infos["PixelXDimension"]
+        pic_infos["height"] = all_pic_infos["PixelYDimension"]
+    else:
+        #for name in ("ImageLength", "ImageWidth"):
+        #    pic_infos[name] = all_pic_infos[name]
+        pic_infos["width"] = all_pic_infos["ImageWidth"]
+        pic_infos["height"] = all_pic_infos["ImageLength"]
+
+    return pic_infos
 
 
 def generate_pic_json_for_dir(dn):
@@ -61,21 +58,27 @@ def generate_pic_json_for_dir(dn):
     print 'found files [%s]' % ', '.join(map(str, names))
 
     for s in sorted(names):
-        allPics.append(generate_pic_info(join(dn,s)))
+        # just for pics
+        ext = os.path.splitext(s)[1].lower()
+        if ext in ['.jpg', '.jpeg', '.jfif', '.nef', '.png']:
+             allPics.append(generate_pic_info(join(dn,s)))
 
     print "end"
+
+    print json.dumps(allPics)
 
     with open('exportedPics.js', 'w') as f:
         #json.dump(allPics, f)
 
-        f.write('var pics=[\n')
+        f.write('var pics={\n')
         pos = -1
         for pic in allPics:
-            pos = pos + 1 
-            pic["no"]=pos
+            pos = pos + 1
+            f.write('%i: ' % pos)
+            #pic["no"]=pos
             f.write(json.dumps(pic))
             f.write(',\n')
-        f.write('];\n')
+        f.write('};\n')
    
     return len(allPics)
 
