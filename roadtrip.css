@@ -28,7 +28,8 @@
 	margin-top: 0px;
 }
 
-#otherNextButton {
+#nextButton,
+#previousButton {
 	margin: 0 auto
 }
 

@@ -140,6 +140,11 @@
 
 	}
 
+// end of map stuff
+
+
+// start of pic stuff
+
 	function showOtherPic(pos){
 		console.log(pos);
 		index = pos;
@@ -150,7 +155,10 @@
 
 		console.log("show pic, position:" + index);
 		
-		var picRef = pics[index % pics.length];
+		//var picRef = pics[index % pics.length];	// TODO: something clever to get all with getNext, getPrevious...
+		//var picRef = pics[index];	
+		index = tryGetPosition(index);
+		var picRef = pics[index];
 		console.log("show pic, picInfo.width:" + picRef.width + "picInfo.height=" + picRef.height);
 		
 		var pic = document.getElementById('thePic');
@@ -180,10 +188,161 @@
 			pic.width = windowRef;
 			pic.height = windowRef / picRatio;
 		}
+		updateUrl(index);
 	}
+
 	
 	function myNextClick(){
-		index++;
+		//index++;
+		getNextIndex();
 		showPic();
 	}
+	function myPreviousClick(){
+		//index--;
+		getPreviousIndex();
+		showPic();
+	}
+
+	function tryGetPosition(pos){
+		if (pics[pos] != null){
+			return pos;
+		} else {
+			var min = getNextBiggerIndex(pos);
+			return min != null ? min : getLowestIndex();
+		}
+	}
+
+    function getPositionWithPound(url) {
+    	if (!url) url = window.location.href;
+		//console.log("url: " + url);
+    	var regex = new RegExp(/[#?](\d*)$/g);
+       	var	results = regex.exec(url);
+       	//var	results = /[#?](\d*)$/.exec(url);
+		//console.log("results: " + results);	// shows whole regex match, then all group matches ... obviously :-p
+    	if (!results) return null;
+		return results[1];
+	}
+
+	function updateUrl(position){
+		var myUrl = window.location.href;
+		var baseUrl = /^(.*)[#?]/.exec(myUrl);
+
+		baseUrl = baseUrl == null ? myUrl : baseUrl[1];
+		//if (baseUrl == null) {
+		//	baseUrl = myUrl;
+		//} else {
+		//	baseUrl = baseUrl[1];
+		//}
+		//console.log("baseUrl: " + baseUrl);
+		var newUrl = baseUrl + "?" + position;
+		window.history.pushState("object or string", "Title", newUrl);
+	}
+
+	function getNextIndex(){
+		// constraint: just integer keys
+		//console.log("current index:" + index);
+		if (pics[index+1] != null) {
+			index++;
+		} else {
+			// search something slighly bigger (or lowest in worstcase)
+			var min = getNextBiggerIndex(parseInt(index));
+			index = min != null ? min : getLowestIndex();
+		}
+	}
+	
+	function getPreviousIndex(){
+		// constraint: just integer keys
+		//console.log("current index:" + index);
+		if (pics[index-1] != null) {
+			index--;
+		} else {
+			// search something slighly smaller (or biggest in worstcase)
+			var min = getNextSmallerIndex(parseInt(index));
+			index = min != null ? min : getBiggestIndex();
+		}
+	}
+
+	function getNextBiggerIndex(number){
+		var myKeys = Object.keys(pics);
+		var len = myKeys.length;
+		var min = null;
+
+		for (var i=0; i < len; i++){
+			var candidate = parseInt(myKeys[i]);
+			if (candidate > number){
+				if (min == null){
+					min = candidate;
+				} else if (min > candidate){
+					min = candidate;
+				}
+			}
+		}
+		return min;
+	}
+
+	function getNextSmallerIndex(number){
+		var myKeys = Object.keys(pics);
+		var len = myKeys.length;
+		var max = null;
+
+		for (var i=0; i < len; i++){
+			var candidate = parseInt(myKeys[i]);
+			if (candidate < number){
+				if (max == null){
+					max = candidate;
+				} else if (max < candidate){
+					max = candidate;
+				}
+			}
+		}
+		return max;
+	}
+
+	function getLowestIndex(){
+		var myKeys = Object.keys(pics);
+		var len = myKeys.length;
+		var min = null;
+
+		for (var i=0; i < len; i++){
+			var candidate = parseInt(myKeys[i]);
+			if (min == null){
+				min = candidate;
+			} else if (candidate < min){
+				min = candidate;
+			}
+		}
+		return min;
+	}
+
+	function getBiggestIndex(){
+		var myKeys = Object.keys(pics);
+		var len = myKeys.length;
+		var max = null;
+
+		for (var i=0; i < len; i++){
+			var candidate = parseInt(myKeys[i]);
+			if (max == null){
+				max = candidate;
+			} else if (candidate > max){
+				max = candidate;
+			}
+		}
+		return max;
+	}
+
+	
+
+$(function(){
+	// test
+	console.log("pics debugging " + Object.keys(pics));
+
+
+	var myNo = getPositionWithPound();
+	console.log(myNo);
+    if (myNo != null) {
+		index = tryGetPosition(myNo);
+		$('#myModal').modal('show');
+		showPic();
+	}
+});
 
