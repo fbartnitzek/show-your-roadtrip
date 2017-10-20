@@ -16,7 +16,7 @@ from os.path import isfile, join
 CREATE_HARDLINK=0
 
 def generate_pic_info(fn):
-    print 'pic found: %s' % (fn)
+    #print 'pic found: %s' % (fn)
     
     if not os.path.isfile(fn):
         print "file not found %s" % fn
@@ -34,7 +34,9 @@ def generate_pic_info(fn):
 
     pic_infos["url"] = fn
     pic_infos["ts"] = all_pic_infos["DateTime"]
-    pic_infos["orientation"] = all_pic_infos["Orientation"]
+    #pic_infos["orientation"] = all_pic_infos["Orientation"]
+    pic_infos["Make"] = all_pic_infos["Make"]
+    pic_infos["Model"] = all_pic_infos["Model"]
 
 
     if "PixelXDimension" in all_pic_infos:
@@ -63,9 +65,9 @@ def generate_pic_json_for_dir(dn):
         if ext in ['.jpg', '.jpeg', '.jfif', '.nef', '.png']:
              allPics.append(generate_pic_info(join(dn,s)))
 
-    print "end"
+    #print "end"
 
-    print json.dumps(allPics)
+    #print json.dumps(allPics)
 
     with open('exportedPics.js', 'w') as f:
         #json.dump(allPics, f)

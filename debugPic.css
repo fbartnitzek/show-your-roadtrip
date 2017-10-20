@@ -1,0 +1,11 @@
+
+#nextButton,
+#previousButton {
+	margin: 0 auto
+}
+
+#thePic{
+    display:block;
+    max-width:80%; max-height:80%;
+}
+

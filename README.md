@@ -10,6 +10,16 @@
 - modify `allLocations.js`, 1 entry at the start-location and 1 entry per accommodation
 - modify `index.html` (maybe that will be configurable too...)
 
+## rotate pictures
+- most of pics work with `exifautotran DIR/*`
+- some are still wrong - use debugPic and rotate yourself
+	- you will see an command which is copied to the clipboard and can be used with `exifmanualtran.sh`
+- seldomly some will still have the wrong exif-tags - use force inverted size
+	- you will see an command which is copied to the clipboard and can be used with `exifForceSize.py
+- hopefully then all are rotated in the right way (look through with debugPic)
+	- accessKeys: shift + alt + n/p/r/f
+- then you can finally generate the json file :-p
+
 ## show the roadtrip
 - click on map-location or route to navigate to show a infobox with the dates
 	- these dates are links and will open a modal window 'ShowPic' to show the configured picture (from allLocations)
