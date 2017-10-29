@@ -28,6 +28,16 @@ def debug_exif(path):
     #print "%s" % json.dumps(picInfos, indent=4, sort_keys=True)
 
 
+def debug_exif_detailed(path):
+    exif_dict = piexif.load(path)
+    picInfos = {}
+    for ifd in ("0th", "Exif", "GPS", "1st"):
+        for tag in exif_dict[ifd]:
+            if piexif.TAGS[ifd][tag]["name"] != "MakerNote":
+                #print(piexif.TAGS[ifd][tag]["name"], exif_dict[ifd][tag])
+                picInfos[str(ifd) + "." + str(tag) + "." + piexif.TAGS[ifd][tag]["name"]] = exif_dict[ifd][tag]
+    
+    return picInfos
 
 
 def debug_pic_infos(fn):
@@ -73,28 +83,39 @@ def debug_pic_infos(fn):
 if __name__=='__main__':
     try:
         path = sys.argv[1]
+        if path == "--verbose":
+            path = sys.argv[2]
+            verbose = True
+        else:
+            verbose = False
     except IndexError:
         print '''Usage:  
 
   generateJsonPicFile.py  dirname
 '''
         sys.exit(1)
-    picInfos = debug_exif(path)
+
+    if verbose:
+        picInfos = debug_exif_detailed(path)
+    else:
+        picInfos = debug_exif(path)
+        
     print "all: %s" % json.dumps(picInfos, indent=4, sort_keys=True)
 
 # collect Make, Model, Orientation, DateTimeOriginal, DateTime
 # PixelXXXDimension for usual pics, ImageLength/Width if not available
-    usefulPicInfos = {}
-    for name in ("Model", "Make", "Orientation", "DateTime"):
-        usefulPicInfos[name] = picInfos[name]
-
-    if "PixelXDimension" in picInfos:
-        for name in ("PixelXDimension", "PixelYDimension"):
-            usefulPicInfos[name] = picInfos[name]
-    else:
-        for name in ("ImageLength", "ImageWidth"):
+    if not verbose:
+        usefulPicInfos = {}
+        for name in ("Model", "Make", "Orientation", "DateTime"):
             usefulPicInfos[name] = picInfos[name]
 
-    print "useful: %s" % json.dumps(usefulPicInfos, indent=4, sort_keys=True)
+        if "PixelXDimension" in picInfos:
+            for name in ("PixelXDimension", "PixelYDimension"):
+                usefulPicInfos[name] = picInfos[name]
+        else:
+            for name in ("ImageLength", "ImageWidth"):
+                usefulPicInfos[name] = picInfos[name]
+
+        print "useful: %s" % json.dumps(usefulPicInfos, indent=4, sort_keys=True)
 
 

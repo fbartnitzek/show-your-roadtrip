@@ -57,8 +57,14 @@ $ ./exifForceSize.py 20170913_102554_jpegtran.jpg 8256 2240
 
     #exif_dict = replace_exif_tags(exif_dict, 2240, 8256)
     if "PixelXDimension" in picInfos:
-        exif_dict["0th"][piexif.ImageIFD.PixelXDimension] = width
-        exif_dict["0th"][piexif.ImageIFD.PixelYDimension] = height
+        try:
+             exif_dict["0th"][piexif.ImageIFD.PixelXDimension] = width
+             exif_dict["0th"][piexif.ImageIFD.PixelYDimension] = height
+        except AttributeError:
+             # happened once...
+             exif_dict["Exif"][40962] = width
+             exif_dict["Exif"][40963] = height
+
     else:
         exif_dict["0th"][piexif.ImageIFD.ImageWidth] = width
         exif_dict["0th"][piexif.ImageIFD.ImageLength] = height

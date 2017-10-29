@@ -13,6 +13,7 @@
 		console.log("show pic, picInfo.width:" + picRef.width + "picInfo.height=" + picRef.height);
 		var pic = document.getElementById('thePic');
 		pic.src = picRef.url;
+		document.getElementById("model").innerHTML = picRef.Make + " (" + picRef.Model + ")";
 		
 		positionSpan.innerText = index;
 		fileUrl.innerText = picRef.url;
@@ -70,6 +71,16 @@
 		document.getElementById("cmdText").innerHTML = cmd;
 		copyTextToClipboard(cmd);
 	}
+	
+	function intelligentRotateClick(){
+		angle = (angle + 90) % 360;
+		rotatePic();
+		
+		document.getElementById("angle").innerHTML = angle;
+		var cmd = getIntelligentRotationText(angle, pics[index].url);
+		document.getElementById("cmdText").innerHTML = cmd;
+		copyTextToClipboard(cmd);
+	}
 
 	function forceInvertedSizeClick(){
 		var cmd = getForceInvertedSizeText();
@@ -79,7 +90,32 @@
 
 	function getRotationText(angle, file){
 		return "./exifmanualtran.sh " + angle + " " + file;
+	} 
+	
+	function getIntelligentRotationText(angle, file){
+		// model aware rotate and invert size and generate json file
+		// &&: just run generateJson-script if first script was successful
+		// improvement: generate json afterwards
+		// another customization/improvement: for non SM-G920F pics, invert size (if needed)
+		var myPic = pics[index];
+		var width = myPic.height;
+		var height = myPic.width;
+		var model = myPic.Model;
+		//console.log(model);
+		var usual = "./exifmanualtran.sh " + angle + " " + file + " && ";
+		if (angle % 180 === 90 && model.indexOf("G920F") === -1) {
+			return usual + getForceInvertedSizeText() + " && " +		
+               "./generateJsonPicFile.py " + getDir(file); 
+		} else {
+		  return "./exifmanualtran.sh " + angle + " " + file + " && "+
+               "./generateJsonPicFile.py " + getDir(file); 
+		} 
 	}
+
+    function getDir(file){
+        return /(.*)\/[^/]*$/.exec(file)[1] + "/";
+    }
+
 	function getForceInvertedSizeText(){
 		var myPic = pics[index];
 		var width = myPic.height;

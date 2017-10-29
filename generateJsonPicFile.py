@@ -35,9 +35,8 @@ def generate_pic_info(fn):
     pic_infos["url"] = fn
     pic_infos["ts"] = all_pic_infos["DateTime"]
     #pic_infos["orientation"] = all_pic_infos["Orientation"]
-    pic_infos["Make"] = all_pic_infos["Make"]
-    pic_infos["Model"] = all_pic_infos["Model"]
-
+    pic_infos["Make"] = removeInvalidChars(all_pic_infos["Make"])
+    pic_infos["Model"] = removeInvalidChars(all_pic_infos["Model"])
 
     if "PixelXDimension" in all_pic_infos:
         #for name in ("PixelXDimension", "PixelYDimension"):
@@ -50,20 +49,26 @@ def generate_pic_info(fn):
         pic_infos["width"] = all_pic_infos["ImageWidth"]
         pic_infos["height"] = all_pic_infos["ImageLength"]
 
+    #print pic_infos
     return pic_infos
 
+def removeInvalidChars(text):
+    s = re.sub(r'\u0000', '', text)
+    return s
 
 def generate_pic_json_for_dir(dn):
     names = os.listdir(dn)
     count=0
     allPics = []
-    print 'found files [%s]' % ', '.join(map(str, names))
+    #print 'found files [%s]' % ', '.join(map(str, names))
 
     for s in sorted(names):
         # just for pics
         ext = os.path.splitext(s)[1].lower()
         if ext in ['.jpg', '.jpeg', '.jfif', '.nef', '.png']:
-             allPics.append(generate_pic_info(join(dn,s)))
+             pic_info = generate_pic_info(join(dn,s))
+             #print pic_info
+             allPics.append(pic_info)
 
     #print "end"
 
